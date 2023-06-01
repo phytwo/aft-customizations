@@ -78,7 +78,8 @@ phases:
       - source $DEFAULT_PATH/aft-venv/bin/activate
       - |
         if [ $TF_DISTRIBUTION = "oss" ]; then
-          TF_BACKEND_REGION=$(aws ssm get-parameter --name "/aft/config/oss-backend/primary-region" --query "Parameter.Value" --output text)
+          TF_BACKEND_PRIMARY_REGION=$(aws ssm get-parameter --name "/aft/config/oss-backend/primary-region" --query "Parameter.Value" --output text)
+          TF_BACKEND_SECONDARY_REGION=$(aws ssm get-parameter --name "/aft/config/oss-backend/secondary-region" --query "Parameter.Value" --output text)
           TF_KMS_KEY_ID=$(aws ssm get-parameter --name "/aft/config/oss-backend/kms-key-id" --query "Parameter.Value" --output text)
           TF_DDB_TABLE=$(aws ssm get-parameter --name "/aft/config/oss-backend/table-id" --query "Parameter.Value" --output text)
           TF_S3_BUCKET=$(aws ssm get-parameter --name "/aft/config/oss-backend/bucket-id" --query "Parameter.Value" --output text)
@@ -99,7 +100,8 @@ phases:
             -D timestamp="$TIMESTAMP" \
             -D tf_distribution_type=$TF_DISTRIBUTION \
             -D provider_region=$CT_MGMT_REGION \
-            -D region=$TF_BACKEND_REGION \
+            -D tf_backend_primary_region=$TF_BACKEND_PRIMARY_REGION \
+            -D tf_backend_secondary_region=$TF_BACKEND_SECONDARY_REGION \
             -D aft_admin_role_arn=$AFT_EXEC_ROLE_ARN \
             -D target_admin_role_arn=$VENDED_EXEC_ROLE_ARN \
             -D bucket=$TF_S3_BUCKET \
